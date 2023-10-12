@@ -2,7 +2,7 @@ from setuptools import find_packages, setup
 setup(
     name='msgkit',
     packages=find_packages(include=['msgkit']),
-    version='0.1.1',
+    version='0.1.2',
     license='MIT',
     description='A Python library that is used for logging informative causes/solutions for given errors.',
     long_description='A Python library that is used for logging informative causes/solutions for given errors.',

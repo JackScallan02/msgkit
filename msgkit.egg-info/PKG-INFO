@@ -1,6 +1,6 @@
 Metadata-Version: 1.1
 Name: msgkit
-Version: 0.1.1
+Version: 0.1.2
 Summary: A Python library that is used for logging informative causes/solutions for given errors.
 Home-page: https://github.com/JackScallan02/msgkit
 Author: Jack Scallan
