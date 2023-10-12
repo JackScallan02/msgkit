@@ -1,4 +1,4 @@
-from msgkit import myfunctions
+from msgkit import logging
 
 def test_add():
-    assert myfunctions.add(2, 3) == 5
+    assert logging.add(2, 3) == 5
