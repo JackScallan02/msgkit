@@ -1,6 +1,6 @@
 ## MSGKIT
 
-MsgKit is a Python library that can be easily implemented into your application. All it takes is a simple import statement and you're ready to go!
+MsgKit is a Python library that provides you with detailed causes and solutions to run-time errors. It can be easily implemented into your application- all it takes is a simple import statement and you're ready to go!
 
 ## Features
 
