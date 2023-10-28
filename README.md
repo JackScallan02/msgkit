@@ -21,7 +21,7 @@ l.giveCode(['directory']) #Gives the name of the directory which contains the fi
 l.debuglog('The DFS is not working correctly') #Give it the bug
 ```
 Result:
-`The issue is with line 16. It should be outside the if condition to correctly add the node to the visited set.`
+`The bug in the code for testfile.py is that the print statement in line 15, intended to add the node to the visited set, is placed inside the "if" statement instead of outside. To fix the bug, move line 15 outside the "if" statement.`
 
 ## Development
 
