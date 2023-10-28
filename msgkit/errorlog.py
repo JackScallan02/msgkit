@@ -1,48 +1,74 @@
+from os import listdir
+from os.path import isfile, join
+from os import walk
+import openai
+import fileinput
+
 class ErrorLog:
 
     def __init__(self):
-        self.causenum = 0
+        self.files = []
+        self.omittedDirs = []
 
-    def printerror(self, num, msg):
+    def giveCode(self, dirs, omittedDirs=[]):
         '''
-        Prints the error number, message received, and potential causes and solutions if desired.
-        The causes are printed out in decreasing order of likelihood.
+        Retrieve all files from all dirs, set omitted dirs (optionally, a user can omit subdirectories)
         '''
-        print(f'\nError received: {num}\n')
-        print(f'Response from server: {msg}\n')
-        print('Possible causes:')
+        self.omittedDirs = omittedDirs
+        for dir in dirs:
+            self.getAllFiles(dir)
 
-        if str(num) == '404':
-            causes = [
-                'The URL was written incorrectly or typed into the browser incorrectly',
-                'The resource was moved, deleted, or is expired',
-                'The file may be in a different path/the path is typed in incorrectly',
-                'The server may not have the necessary permissions to access the requested resource',
-                'Misconfigured server settings, such as incorrect routing rules or missing configuration files',
-                'If a web server is not configured to serve a default page (e.g., "index.html") and you don\'t specify a specific page in the URL',
-                'Websites using content management systems (CMS) may generate 404 errors if the requested URL corresponds to a non-existent or unpublished page',
-                'The website may be using URL rewriting to create user-friendly URLs (e.g., from /page?id=123 to /page/123)',
-                'When working with APIs, there could be changes in the API\'s structure, endpoint names, or versioning',
-                'Problems with DNS (Domain Name System) configuration',
-                'In a network with load balancers or reverse proxies, misconfiguration can cause requests to be routed to non-existent endpoints',
-            ]
-            self.printCauses(causes)
-            print('\nPossible solutions:')
-            solutions = [
-                'Check the URL or path',
-                'Verify the resource exists',
-                'Check the server logs',
-                'Check permissions for the file or directory',
-                'Check if cache and content management systems are interfering',
-            ]
-            self.printSolutions(solutions)
+    def debuglog(self, err, brief=True):
+        '''
+        Logs the solution to the error, which is manually typed by the user or caught as an exception
+        err: the error message
+        brief (optional): decides whether the response should be brief or not.
+        '''
+        if len(self.files) == 0:
+            print("ERR: Please provide the files or directories for the code.")
+            return -1
 
-    def printCauses(self, causes):
-        if self.causenum != 0:
-            causes = causes[:self.causenum]
-        for i, cause in enumerate(causes):
-            print(f'{i + 1}.', cause)
+        msg = self.constructPrompt(self.files, err, brief)
+        response = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo",
+        messages=[
+            {"role": "user", "content": msg},
+        ])
+        print(response['choices'][0]['message']['content'])
 
-    def printSolutions(self, solutions):
-        for i, solution in enumerate(solutions):
-            print(f'{i + 1}.', solution)
+    def constructPrompt(self, files, err, brief):
+        '''
+        err: the inputted error message
+        '''
+        msg = ['The code I have for each file is as follows:\n']
+        for file in files:
+            f = open(file, mode='rb')
+            codeFromFile = "1 " + f.read().decode('utf-8')
+            lines = codeFromFile.split('\n')
+            codeString = ''
+            for i, line in enumerate(lines):
+                codeString += f"{line}\n{i + 2} "
+            msg += [f'The code for {file}, starting at --- and ending at ---:\n---\n', codeString, '\n---\n\n']
+            f.close()
+        if brief:
+            msg.append(''.join(['Do not mention indentations, and answering specific to the above code, and limiting to 200 characters, and mentioning which file, solve this bug I have:, starting at --- and ending at ---?:', '\n---\n', err, '\n---']))
+        else:
+            msg.append(''.join(['Do not mention indentations, and answering specific to the above code, and mentioning which file, solve this bug I have:, starting at --- and ending at ---?:', '\n---\n', err, '\n---']))
+
+        return ''.join(msg)
+
+    def getAllFiles(self, curDir):
+        '''
+        curDir: the current working directory
+
+        Recursively retrieves all files within a directory
+        Ensures file is not in omittedDirs
+        '''
+
+        for (dirpath, dirnames, filenames) in walk(curDir):
+            for file in filenames:
+                self.files.append(''.join([dirpath, '/', file]))
+            for dir in dirnames:
+                if dir not in self.omittedDirs:
+                    self.getAllFiles(''.join([dirpath, '/', dir]))
+            break
