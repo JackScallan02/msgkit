@@ -21,7 +21,7 @@ pip install openai
 ## Instructions
 
 Once the libraries are installed, set the environment variable for your OpenAI API key:
-`export OPENAI_API_KEY="{Your key here}"`
+`export OPENAI_API_KEY={Your key here}`
 
 In your code, import the logger:
 `from msgkit.logging import logger as l`
