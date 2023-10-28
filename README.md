@@ -15,9 +15,13 @@ pip install msgkit
 
 ## Example usage:
 ```
+from msgkit.logging import logger as l
+
 l.giveCode(['directory']) #Gives the name of the directory which contains the files of the code.
 l.debuglog('The DFS is not working correctly') #Give it the bug
 ```
+Result:
+`The issue is with line 16. It should be outside the if condition to correctly add the node to the visited set.`
 
 ## Development
 
