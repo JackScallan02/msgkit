@@ -15,14 +15,8 @@ pip install msgkit
 
 ## Example usage:
 ```
-from msgkit.logging import logger as l
-import os
-import openai
-
-openai.api_key = os.getenv("OPENAI_API_KEY")
-
-l.giveCode(['testfolder'])
-l.debuglog('The DFS is not working correctly')
+l.giveCode(['directory']) #Gives the name of the directory which contains the files of the code.
+l.debuglog('The DFS is not working correctly') #Give it the bug
 ```
 
 ## Development
