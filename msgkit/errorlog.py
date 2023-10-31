@@ -1,8 +1,6 @@
-from os import listdir
+from os import listdir, walk
 from os.path import isfile, join
-from os import walk
-import openai
-import fileinput
+from openai import ChatCompletion
 
 class ErrorLog:
 
@@ -29,7 +27,7 @@ class ErrorLog:
             return -1
 
         msg = self.constructPrompt(self.files, err, brief)
-        response = openai.ChatCompletion.create(
+        response = ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=[
             {"role": "user", "content": msg},
